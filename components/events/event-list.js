@@ -5,8 +5,7 @@ export default function EventList(props) {
     return (
         <ul className={styles.list}>
             {items.map(event => {
-                console.log(1);
-                
+
                 const { title, image, date, location, id } = event
                 return (
                     <EventItem
