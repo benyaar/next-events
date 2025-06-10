@@ -9,7 +9,7 @@ export default function EventPage (){
     const router = useRouter()
     const eventId = router.query.eventId
     const event = getEventById(eventId)
-    if(event) return <p>No event</p>
+    if(!event) return <p>No event</p>
     return(
         <Fragment>
             <EventSummary title={event.title}/>
