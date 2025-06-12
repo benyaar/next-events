@@ -19,13 +19,14 @@ export default function AllEventsPage({events}) {
     )
 }
 
-export async function getStaticProps(){
-    const featuredEvents = await getAllEvents()
-    console.log(featuredEvents);
-    
+
+export async function getStaticProps() {
+
+    const events = await getAllEvents()
     return {
         props: {
-            events: featuredEvents
-        }
+            events
+        },
+        revalidate:60
     }
 }

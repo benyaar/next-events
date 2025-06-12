@@ -2,12 +2,11 @@ import { Fragment } from 'react'
 import EventSummary from '../../components/event-detail/event-summary'
 import EventLogistics from '../../components/event-detail/event-logistics'
 import EventContent from '../../components/event-detail/event-content'
-import ErrorAlert from '../../components/ui/error-alert'
-import { getEventById, getAllEvents } from '../../helpers/api-util'
+import { getEventById, getFeaturedEvents } from '../../helpers/api-util'
 
 export default function EventPage({ selectedEvent: event }) {
     if (!event) {
-        return <ErrorAlert><p>No event</p></ErrorAlert>
+        return <div className='center'><p>Loading...</p></div>
     }
     return (
         <Fragment>
@@ -31,11 +30,11 @@ export async function getStaticProps(context) {
 }
 
 export async function getStaticPaths(context) {
-    const events = await getAllEvents()
+    const events = await getFeaturedEvents()
     const paths = events.map(event => ({params: {eventId: event.id}}))
     return {
         paths,
-        fallback: false,
+        fallback: true,
     }
 }
 
