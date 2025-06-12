@@ -4,13 +4,49 @@ import { Fragment } from "react"
 import ResultsTitle from "../../components/results-title/results-title"
 import Button from "../../components/ui/button"
 import ErrorAlert from "../../components/ui/error-alert"
-import { getFilteredEvents } from "../../helpers/api-util"
 
-export default function FilteredEventPage({hasError, events, date}) {
-   
+import useSWR from "swr"
 
-    if (hasError
-    ) {
+export default function FilteredEventPage() {
+    const router = useRouter()
+    const filterData = router.query.slug
+
+    if (!filterData) {
+        return (
+            <p className="center">
+                ...Loading
+            </p>
+        )
+    }
+
+    const fetcher = (url) => fetch(url).then(res => res.json());
+    const { data, error, isLoading } = useSWR('https://next-events-48d19-default-rtdb.europe-west1.firebasedatabase.app/events.json', fetcher)
+    
+
+    if (isLoading) {
+        return (
+            <p className="center">
+                ...Loading
+            </p>
+        )
+    }
+    if (error) {
+        return (
+            <p className="center">
+                error
+            </p>
+        )
+    }
+    const filteredYear = filterData[0]
+    const filteredMonth = filterData[1]
+    console.log(filteredYear, filteredMonth);
+    
+    if (isNaN(+filteredYear) ||
+        isNaN(+filteredMonth) ||
+        +filteredYear > 2030 ||
+        +filteredYear < 2021 ||
+        +filteredMonth < 1 ||
+        +filteredMonth > 12 || error) {
         return (
             <Fragment>
                 <ErrorAlert><p>Invalid filter</p></ErrorAlert>
@@ -20,8 +56,14 @@ export default function FilteredEventPage({hasError, events, date}) {
             </Fragment>
         )
     }
+    const filteredEvents = data.filter((event) => {
+        const eventDate = new Date(event.date);
+        return eventDate.getFullYear() === +filteredYear && eventDate.getMonth() === +filteredMonth - 1;
+    });
 
-    if (!events?.length) {
+
+
+    if (!filteredEvents?.length) {
         return (
             <Fragment>
                 <ErrorAlert><p>Not found</p></ErrorAlert>
@@ -31,49 +73,13 @@ export default function FilteredEventPage({hasError, events, date}) {
             </Fragment>
         )
     }
-    const filterDate = new Date(date.year, date.month - 1)
+    const filterDate = new Date(+filteredYear, +filteredMonth - 1)
 
     return (
         <Fragment>
             <ResultsTitle date={filterDate} />
-            <EventList items={events} />
+            <EventList items={filteredEvents} />
         </Fragment>
     )
 }
 
-export async function getServerSideProps(context) {
-    const { params } = context
-    const filterData = params.slug
-    const filteredYear = filterData[0]
-    const filteredMonth = filterData[1]
-
-
-    if (isNaN(+filteredYear) ||
-        isNaN(+filteredMonth) ||
-        +filteredYear > 2030 ||
-        +filteredYear < 2021 ||
-        +filteredMonth < 1 ||
-        +filteredMonth > 12
-    ) {
-        return {
-           props: {
-                hasError: true
-           },
-           notFound: true,
-        }
-    }
-    const filteredEvents = await getFilteredEvents({
-        year: +filteredYear,
-        month: +filteredMonth
-    })
-    return {
-        props: {
-            events: filteredEvents,
-            date: {
-                year: +filteredYear,
-                month: +filteredMonth
-            }
-        }
-    }
-
-}
