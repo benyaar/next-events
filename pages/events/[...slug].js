@@ -6,6 +6,7 @@ import Button from "../../components/ui/button"
 import ErrorAlert from "../../components/ui/error-alert"
 
 import useSWR from "swr"
+import Head from "next/head"
 
 export default function FilteredEventPage() {
     const router = useRouter()
@@ -21,7 +22,7 @@ export default function FilteredEventPage() {
 
     const fetcher = (url) => fetch(url).then(res => res.json());
     const { data, error, isLoading } = useSWR('https://next-events-48d19-default-rtdb.europe-west1.firebasedatabase.app/events.json', fetcher)
-    
+
 
     if (isLoading) {
         return (
@@ -40,7 +41,7 @@ export default function FilteredEventPage() {
     const filteredYear = filterData[0]
     const filteredMonth = filterData[1]
     console.log(filteredYear, filteredMonth);
-    
+
     if (isNaN(+filteredYear) ||
         isNaN(+filteredMonth) ||
         +filteredYear > 2030 ||
@@ -77,6 +78,13 @@ export default function FilteredEventPage() {
 
     return (
         <Fragment>
+            <Head>
+                <title>Filterd Events</title>
+                <meta
+                    name='description'
+                    content={`All events for ${filteredYear} and ${filteredMonth}`}
+                />
+            </Head>
             <ResultsTitle date={filterDate} />
             <EventList items={filteredEvents} />
         </Fragment>

@@ -7,9 +7,16 @@ import { getEventById, getFeaturedEvents } from '../../helpers/api-util'
 export default function EventPage({ selectedEvent: event }) {
     if (!event) {
         return <div className='center'><p>Loading...</p></div>
-    }
+    }a
     return (
         <Fragment>
+            <Head>
+                <title>{event.title}</title>
+                <meta 
+                    name='description'
+                    content={event.description}
+                />
+            </Head> 
             <EventSummary title={event.title} />
             <EventLogistics date={event.date} address={event.location} image={event.image} imageAlt={event.title} />
             <EventContent>
