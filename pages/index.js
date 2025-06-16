@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import EventList from '../components/events/event-list'
 import { getFeaturedEvents } from '../helpers/api-util'
+import NewsletterRegistration from '../components/input/newsletter-registration'
 
 export default function HomePage ({events}){
     
@@ -13,6 +14,7 @@ export default function HomePage ({events}){
                     content='Welcome to my project'
                 />
             </Head> 
+            <NewsletterRegistration />
            <EventList items={events}/>
         </div>
     )

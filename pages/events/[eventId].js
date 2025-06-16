@@ -3,11 +3,13 @@ import EventSummary from '../../components/event-detail/event-summary'
 import EventLogistics from '../../components/event-detail/event-logistics'
 import EventContent from '../../components/event-detail/event-content'
 import { getEventById, getFeaturedEvents } from '../../helpers/api-util'
+import Comments from '../../components/input/comments'
+import Head from 'next/head'
 
 export default function EventPage({ selectedEvent: event }) {
     if (!event) {
         return <div className='center'><p>Loading...</p></div>
-    }a
+    }
     return (
         <Fragment>
             <Head>
@@ -22,6 +24,7 @@ export default function EventPage({ selectedEvent: event }) {
             <EventContent>
                 <p>{event.description}</p>
             </EventContent>
+            <Comments eventId={event.id}/>
         </Fragment>
     )
 }
