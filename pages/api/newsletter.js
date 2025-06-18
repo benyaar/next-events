@@ -7,8 +7,15 @@ export default async function handler(req, res) {
             res.status(422).json({ message: 'Invalid email adress' })
             return;
         }
-        const { db } = await connectToDatabase()
-        await db.collection('email').insertOne({email})
-        res.status(201).json({ message: 'Signed up!' })
+        try {
+            const { db } = await connectToDatabase()
+            await db.collection('email').insertOne({ email })
+            res.status(201).json({ message: 'Signed up!' })
+            return 
+        } catch (error) {
+            res.status(500).json({ message: 'Insert fail' })
+            return
+        }
+
     }
 }
