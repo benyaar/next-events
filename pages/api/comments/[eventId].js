@@ -1,4 +1,6 @@
-export default function handler(req, res) {
+import { connectToDatabase } from "../../../helpers/mongodb";
+
+export default async function handler(req, res) {
     const eventId = req.query.eventId
     if (req.method === 'POST') {
         const { email, name, text } = req.body
@@ -8,17 +10,22 @@ export default function handler(req, res) {
         }
 
         const newComment = {
-            id: new Date().toISOString(),
-            email, name, text
+            email, name, text, eventId
         }
+
+        const { db } = await connectToDatabase()
+        const result = await db.collection('comments').insertOne(newComment)
+        newComment.id = result.insertedId
         res.status(201).json({ message: 'Added comment', comment: newComment })
     }
 
     if (req.method === 'GET') {
-        const dummyList = [
-            { id: 'c1', name: 'Max', text: 'First' },
-            { id: 'c2', name: 'Ann', text: 'Second' }
-        ]
-        res.status(200).json({comments: dummyList})
+        const documents = await db
+            .collection('comments')
+            .find()
+            .sort({ _id: -1 })
+            .toArray();
+
+        res.status(200).json({ comments: documents })
     }
 }
