@@ -10,6 +10,8 @@ export default async function handler(req, res) {
         try {
             const { db } = await connectToDatabase()
             await db.collection('email').insertOne({ email })
+          
+            
             res.status(201).json({ message: 'Signed up!' })
             return 
         } catch (error) {
